@@ -9,6 +9,10 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.JavaConverters._
 import scala.util.control.NonFatal
 
+/*
+ Reference: https://javadoc.io/doc/org.apache.kafka/kafka-clients/latest/org/apache/kafka/clients/consumer/KafkaConsumer.html
+ */
+
 class Consumer(topics: List[String], servers: List[String]) {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass())
@@ -19,6 +23,8 @@ class Consumer(topics: List[String], servers: List[String]) {
     props.put("group.id", "test")
     props.put("enable.auto.commit", "true")
     props.put("auto.commit.interval.ms", "1000")
+    // pull at time one message only
+    //  props.put("max.poll.records", "1")
     props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
     props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
     props
@@ -31,8 +37,10 @@ class Consumer(topics: List[String], servers: List[String]) {
 
   def read(): Vector[String] =
     try {
-      consumer.poll(Duration.ofMillis(100))
-        .asScala.map { record => record.value() }
+      consumer
+        .poll(Duration.ofMillis(100))
+        .asScala
+        .map { record => record.value() }
         .toVector
     } catch {
       case NonFatal(th) =>
