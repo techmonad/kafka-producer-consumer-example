@@ -16,7 +16,7 @@ object DemoApp extends App {
 
   val consumer = new Consumer(List(topic), List(server))
 
-  Future {
+ // Future {
     /**
      * Start sending messages on other thread
      */
@@ -27,16 +27,16 @@ object DemoApp extends App {
       producer.send(topic, message)
       Thread.sleep(100)
     }
-  }
+  //}
 
 
   /**
    * Staring consuming messages
    */
-  Iterator.continually(consumer.read()).foreach { messages =>
+/*  Iterator.continually(consumer.read()).foreach { messages =>
     Thread.sleep(1000) //ONLY FOR DEMO
     messages.foreach(println)
 
-  }
+  }*/
 
 }
